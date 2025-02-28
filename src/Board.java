@@ -1,54 +1,57 @@
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import com.google.common.collect.ImmutableList;
 
 public class Board {
-    private List<Tile> gameBoard;
-    private Car redCar;
-    private Collection<Car> otherCars;
+    private final char[][] gameBoard;
+    private Collection<Car> allCars;
 
-    private Board(final Builder builder) {
-        this.gameBoard = createGameBoard(builder);
-
+    private Board() {
+        this.gameBoard = new char
+                [BoardUtils.NUM_TILES][BoardUtils.NUM_TILES];
+        this.allCars = new ArrayList<>();
+        initBoard();
     }
 
-    private static List<Tile> createGameBoard(final Builder builder) {
-        final Tile[] tiles = new Tile[BoardUtils.NUM_TILES];
-        for (int i = 0; i < tiles.length; i++) {
-            tiles[i] = Tile.createTile(i, builder.boardMap.get(i));
-        }
-        return ImmutableList.copyOf(tiles);
-    }
-
-    private List<Tile> getGameBoard() {
+    public char[][] getGameBoard() {
         return this.gameBoard;
     }
 
-    private Car getRedCar() {
-        return this.redCar;
+    public Collection<Car> getOtherCars() {
+        return this.allCars;
     }
 
-    private Collection<Car> getOtherCars() {
-        return this.otherCars;
+    private void initBoard() {
+        for (int row = 0; row < BoardUtils.NUM_TILES; row++) {
+            for (int col = 0; col < BoardUtils.NUM_TILES; col++) {
+                this.gameBoard[row][col] = '-';
+            }
+        }
+        allCars.add(new Car
+                (2, 0, 2, true, 'R'));
+        allCars.add(new Car
+                (1, 4, 2, true, 'G'));
+        allCars.add(new Car
+                (5, 4, 3, false, 'Y'));
+        allCars.add(new Car
+                (5, 2, 3, false, 'B'));
+        allCars.add(new Car
+                (3, 4, 2, true, 'O'));
+        placeVehicles();
     }
 
-    public static class Builder {
-        Map<Integer, Car> boardMap;
-        Car redCar;
-
-        public Builder() {
-            boardMap = new HashMap<>();
-        }
-
-        public Builder setCar(final Car car) {
-            this.boardMap.put(car.getPiecePosition(), car);
-            return this;
-        }
-
-        public Board build() {
-            return new Board(this);
+    private void placeVehicles() {
+        for (Car car : allCars) {
+            int row = car.getRow();
+            int col = car.getCol();
+            for (int i = 0; i < car.getLength(); i++) {
+                gameBoard[row][col] = car.getColor();
+                if (car.isVertical()) {
+                    row++;
+                } else {
+                    col++;
+                }
+            }
         }
     }
 }

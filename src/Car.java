@@ -1,38 +1,30 @@
-public abstract class Car {
-    protected final PieceType pieceType;
-    protected final int piecePosition;
+public class Car {
+    private int row;
+    private int col;
+    private final int length;
+    private final boolean isVertical;
+    private final char color;
 
-    private Car(final PieceType pieceType, final int piecePosition) {
-        this.pieceType = pieceType;
-        this.piecePosition = piecePosition;
+    public Car(int row, int col, int length,
+                boolean isVertical, char color) {
+        this.row = row;
+        this.col = col;
+        this.length = length;
+        this.isVertical = isVertical;
+        this.color = color;
     }
 
-    public PieceType getPieceType() {
-        return this.pieceType;
-    }
+    public int getRow() {return this.row;}
+    public int getCol() {return this.col;}
+    public int getLength() {return this.length;}
+    public boolean isVertical() {return this.isVertical;}
+    public char getColor() {return this.color;}
 
-    public int getPiecePosition() {
-        return this.piecePosition;
-    }
-
-    public enum PieceType {
-        RED_CAR("Red") {
-
-        },
-        //TODO - make other car colors
-        OTHER_CAR("Other") {
-
-        };
-
-        private final String pieceColor;
-
-        PieceType(final String pieceColor) {
-            this.pieceColor = pieceColor;
-        }
-
-        @Override
-        public String toString() {
-            return this.pieceColor;
+    public void move(int displacement) {
+        if (this.isVertical) {
+            this.row += displacement;
+        } else {
+            this.col += displacement;
         }
     }
 }
