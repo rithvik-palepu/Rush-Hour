@@ -4,13 +4,14 @@ import com.google.common.collect.ImmutableList;
 
 public class Board {
     private final char[][] gameBoard;
-    private Collection<Car> allCars;
+    private final Collection<Car> allCars; //3234
 
-    private Board() {
+    public Board() {
         this.gameBoard = new char
                 [BoardUtils.NUM_TILES][BoardUtils.NUM_TILES];
         this.allCars = new ArrayList<>();
         initBoard();
+        printBoard();
     }
 
     public char[][] getGameBoard() {
@@ -28,15 +29,15 @@ public class Board {
             }
         }
         allCars.add(new Car
-                (2, 0, 2, true, 'R'));
+                (2, 0, 2, false, 'R'));
         allCars.add(new Car
-                (1, 4, 2, true, 'G'));
+                (0, 3, 2, false, 'G'));
         allCars.add(new Car
-                (5, 4, 3, false, 'Y'));
+                (3, 1, 3, true, 'Y'));
         allCars.add(new Car
-                (5, 2, 3, false, 'B'));
+                (5, 3, 3, false, 'B'));
         allCars.add(new Car
-                (3, 4, 2, true, 'O'));
+                (2, 4, 2, true, 'O'));
         placeVehicles();
     }
 
@@ -52,6 +53,15 @@ public class Board {
                     col++;
                 }
             }
+        }
+    }
+
+    public void printBoard() {
+        for (int row = 0; row < BoardUtils.NUM_TILES; row++) {
+            for (int col = 0; col < BoardUtils.NUM_TILES; col++) {
+                System.out.print(gameBoard[row][col]);
+            }
+            System.out.println();
         }
     }
 }
