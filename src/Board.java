@@ -38,10 +38,10 @@ public class Board {
                 (5, 3, 3, false, 'B'));
         allCars.add(new Car
                 (2, 4, 2, true, 'O'));
-        placeVehicles();
+        placeCars();
     }
 
-    private void placeVehicles() {
+    private void placeCars() {
         for (Car car : allCars) {
             int row = car.getRow();
             int col = car.getCol();
@@ -54,6 +54,54 @@ public class Board {
                 }
             }
         }
+    }
+
+    public void moveCar(int color, int displacement) {
+        for (Car car : allCars) {
+            int row = car.getRow();
+            int col = car.getCol();
+            if (car.getColor() == color && canMove(car, displacement)) {
+                allCars.remove(car);
+                if (car.isVertical()) {
+                    allCars.add(new Car(
+                            car.getRow(), car.getCol() + displacement,
+                            car.getLength(), true, car.getColor()));
+                    ))
+                } else {
+                    allCars.add(new Car(
+                            car.getRow() + displacement, car.getCol(),
+                            car.getLength(), false, car.getColor()));
+                    ))
+                }
+                placeCars();
+                break;
+            }
+        }
+    }
+
+    private boolean canMove(Car car, int displacement) {
+        int row = car.getRow();
+        int col = car.getCol();
+        if (car.isVertical()) {
+            row += car.getLength()-1;
+            for (int i = 0; i < displacement; i++) {
+                row++
+                if (gameBoard[row][col] != '-') {
+                    row--;
+                    return false;
+                }
+            }
+            return true;
+        }
+        col += car.getLength()-1;
+        for (int i = 0; i < displacement; i++) {
+            col++
+            if (gameBoard[row][col] != '-') {
+                col--;
+                return false;
+            }
+        }
+        return true;
     }
 
     public void printBoard() {
