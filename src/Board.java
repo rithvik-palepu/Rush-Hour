@@ -12,14 +12,9 @@ public class Board {
         this.allCars = new ArrayList<>();
         initBoard();
         printBoard();
-    }
-
-    public char[][] getGameBoard() {
-        return this.gameBoard;
-    }
-
-    public Collection<Car> getOtherCars() {
-        return this.allCars;
+        System.out.println();
+        moveCar('R', 2);
+        printBoard();
     }
 
     private void initBoard() {
@@ -38,6 +33,15 @@ public class Board {
                 (5, 3, 3, false, 'B'));
         allCars.add(new Car
                 (2, 4, 2, true, 'O'));
+        placeCars();
+    }
+
+    private void transitionBoard() {
+        for (int row = 0; row < BoardUtils.NUM_TILES; row++) {
+            for (int col = 0; col < BoardUtils.NUM_TILES; col++) {
+                    this.gameBoard[row][col] = '-';
+            }
+        }
         placeCars();
     }
 
@@ -64,16 +68,13 @@ public class Board {
                 allCars.remove(car);
                 if (car.isVertical()) {
                     allCars.add(new Car(
-                            car.getRow(), car.getCol() + displacement,
+                            row + displacement, col,
                             car.getLength(), true, car.getColor()));
-                    ))
-                } else {
-                    allCars.add(new Car(
-                            car.getRow() + displacement, car.getCol(),
-                            car.getLength(), false, car.getColor()));
-                    ))
                 }
-                placeCars();
+                allCars.add(new Car(
+                        row, col + displacement,
+                        car.getLength(), false, car.getColor()));
+                transitionBoard();
                 break;
             }
         }
@@ -85,7 +86,7 @@ public class Board {
         if (car.isVertical()) {
             row += car.getLength()-1;
             for (int i = 0; i < displacement; i++) {
-                row++
+                row++;
                 if (gameBoard[row][col] != '-') {
                     row--;
                     return false;
@@ -93,9 +94,10 @@ public class Board {
             }
             return true;
         }
+        //todo extract method here maybe
         col += car.getLength()-1;
         for (int i = 0; i < displacement; i++) {
-            col++
+            col++;
             if (gameBoard[row][col] != '-') {
                 col--;
                 return false;
