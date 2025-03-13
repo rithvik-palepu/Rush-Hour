@@ -3,24 +3,21 @@ import java.util.*;
 import com.google.common.collect.ImmutableList;
 
 public class Board {
-    private final char[][] gameBoard;
+    private final Tile[][] gameBoard;
     private final Collection<Car> allCars;
 
     public Board() {
-        this.gameBoard = new char
+        this.gameBoard = new Tile
                 [BoardUtils.NUM_TILES][BoardUtils.NUM_TILES];
         this.allCars = new ArrayList<>();
         initBoard();
-        printBoard();
-        System.out.println();
-        moveCar('O', -1);
         printBoard();
     }
 
     private void initBoard() {
         for (int row = 0; row < BoardUtils.NUM_TILES; row++) {
             for (int col = 0; col < BoardUtils.NUM_TILES; col++) {
-                this.gameBoard[row][col] = '-';
+                this.gameBoard[row][col] = new Tile.EmptyTile(row, col);
             }
         }
         allCars.add(new Car
@@ -39,7 +36,7 @@ public class Board {
     private void transitionBoard() {
         for (int row = 0; row < BoardUtils.NUM_TILES; row++) {
             for (int col = 0; col < BoardUtils.NUM_TILES; col++) {
-                    this.gameBoard[row][col] = '-';
+                    this.gameBoard[row][col] = new Tile.EmptyTile(row, col);
             }
         }
         placeCars();
@@ -50,7 +47,7 @@ public class Board {
             int row = car.getRow();
             int col = car.getCol();
             for (int i = 0; i < car.getLength(); i++) {
-                gameBoard[row][col] = car.getColor();
+                gameBoard[row][col] = new Tile.OccupiedTile(row, col, car);
                 if (car.isVertical()) {
                     row++;
                 } else {
@@ -88,7 +85,7 @@ public class Board {
             row = (displacement > 0) ? car.getLength()-1 : row;
             for (int i = 0; i < Math.abs(displacement); i++) {
                 row = (displacement > 0) ? row + 1 : row - 1;
-                if (gameBoard[row][col] != '-') {
+                if (gameBoard[row][col].getCar() != null) {
                     return false;
                 }
             }
@@ -98,7 +95,7 @@ public class Board {
         col = (displacement > 0) ? car.getLength()-1 : col;
         for (int i = 0; i < Math.abs(displacement); i++) {
             col = (displacement > 0) ? col + 1 : col - 1;
-            if (gameBoard[row][col] != '-') {
+            if (gameBoard[row][col].getCar() != null) {
                 return false;
             }
         }
@@ -112,5 +109,6 @@ public class Board {
             }
             System.out.println();
         }
+        System.out.println();
     }
 }
