@@ -125,6 +125,10 @@ public class Board {
         return true;
     }
 
+    public Tile getTile(int row, int col) {
+        return gameBoard[row][col];
+    }
+
     // loops through board and prints visual representation
     // will become practically obsolete with the java swing
     // based gui

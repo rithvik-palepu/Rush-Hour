@@ -32,6 +32,11 @@ public abstract class Tile {
         public Car getCar() {
             return null;
         }
+
+        @Override
+        public String toString() {
+            return "-";
+        }
     }
 
     // second child class, occupied tile, has a car on it
@@ -51,6 +56,11 @@ public abstract class Tile {
         @Override
         public Car getCar() {
             return this.carOnTile;
+        }
+
+        @Override
+        public String toString() {
+            return carOnTile.getColor() + "";
         }
     }
 }

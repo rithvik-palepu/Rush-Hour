@@ -3,12 +3,14 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 
 // Table class to visually represent the game board using Java swing
 public class Table extends Observable {
     private final JFrame frame;
-    // private final BoardPanel boardPanel;
+    private final BoardPanel boardPanel;
     private Board gameBoard;
 
     private Tile sourceTile;
@@ -34,6 +36,7 @@ public class Table extends Observable {
         this.frame.setSize(OUTER_FRAME_DIMENSION);
 
         this.gameBoard = new Board();
+        this.boardPanel = new BoardPanel();
 
         this.frame.setVisible(true);
     }
@@ -42,8 +45,37 @@ public class Table extends Observable {
         return INSTANCE;
     }
 
-    private class BoardPanel extends JPanel {
+    public void show() {
+        Table.get().boardPanel.drawBoard(Table.get().gameBoard);
+    }
 
+    private class BoardPanel extends JPanel {
+        final List<TilePanel> boardTiles;
+        public BoardPanel() {
+            super(new GridLayout
+                    (BoardUtils.NUM_TILES, BoardUtils.NUM_TILES));
+            this.boardTiles = new ArrayList<>();
+            for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
+                for (int j = 0; j < BoardUtils.NUM_TILES; j++) {
+                    final TilePanel tilePanel = new
+                            TilePanel(this, i, j);
+                    this.boardTiles.add(tilePanel);
+                    add(tilePanel);
+                }
+            }
+            setPreferredSize(BOARD_PANEL_DIMENSION);
+            validate();
+        }
+
+        public void drawBoard(final Board board) {
+            removeAll();
+            for (final TilePanel tilePanel : boardTiles) {
+                tilePanel.drawTile(board);
+                add(tilePanel);
+            }
+            validate();
+            repaint();
+        }
     }
 
     private class TilePanel extends JPanel {
@@ -57,8 +89,8 @@ public class Table extends Observable {
             // highlight legal moves
             this.highlightLegals = false;
             setPreferredSize(TILE_PANEL_DIMENSION);
-            // todo assignTileColor();
-            // todo assignTilePieceIcon(chessBoard);
+            setBackground(Color.LIGHT_GRAY);
+            assignColor(gameBoard);
 
             // listen to user's mouse activity
             addMouseListener(new MouseListener() {
@@ -88,6 +120,41 @@ public class Table extends Observable {
 
                 }
             });
+
+            validate();
+        }
+
+        public void drawTile(final Board board) {
+            assignColor(board);
+            validate();
+            repaint();
+        }
+
+        // MVP: assign basic color for tile based on car
+        private void assignColor(final Board board) {
+            Tile tile = board.getTile(tileRow, tileCol);
+            Car tileCar = tile.getCar();
+            if (tileCar == null) {
+                setBackground(Color.LIGHT_GRAY);
+            } else {
+                char color = tileCar.getColor();
+                if (color == 'R') {
+                    setBackground(Color.red);
+                } else if (color == 'G') {
+                    setBackground(Color.green);
+                } else if (color == 'Y') {
+                    setBackground(Color.yellow);
+                } else if (color == 'B') {
+                    setBackground(Color.blue);
+                } else if (color == 'O') {
+                    setBackground(Color.orange);
+                } else {
+                    throw new IllegalStateException(
+                            "Unknown color: " + color
+                    );
+                }
+            }
+
         }
     }
 }
