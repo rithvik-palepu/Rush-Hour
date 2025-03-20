@@ -10,6 +10,8 @@ import java.util.Observable;
 // Table class to visually represent the game board using Java swing
 public class Table extends Observable {
     private final JFrame frame;
+    private JButton[][] grid = new JButton[BoardUtils.NUM_TILES][BoardUtils.NUM_TILES];
+    private List<Car> cars;
     private final BoardPanel boardPanel;
     private Board gameBoard;
 
@@ -31,9 +33,9 @@ public class Table extends Observable {
     // defines Table object, initializes gameBoard, frame, and dimensions
     private Table() {
         this.frame = new JFrame("Rush Hour");
-        this.frame.setLayout(new BorderLayout());
         //todo tableMenuBar
         this.frame.setSize(OUTER_FRAME_DIMENSION);
+        this.frame.setLayout(new GridLayout(BoardUtils.NUM_TILES, BoardUtils.NUM_TILES));
 
         this.gameBoard = new Board();
         this.boardPanel = new BoardPanel();
