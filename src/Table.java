@@ -1,14 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
 // Table class to visually represent the game board using Java swing
-public class Table extends Observable {
+public class Table extends JFrame implements KeyListener, ActionListener {
     private final JFrame frame;
     private JButton[][] grid = new JButton[BoardUtils.NUM_TILES][BoardUtils.NUM_TILES];
     private List<Car> cars;
@@ -32,15 +30,18 @@ public class Table extends Observable {
 
     // defines Table object, initializes gameBoard, frame, and dimensions
     private Table() {
-        this.frame = new JFrame("Rush Hour");
+        this.frame = new JFrame();
+        setTitle("Rush Hour");
         //todo tableMenuBar
-        this.frame.setSize(OUTER_FRAME_DIMENSION);
-        this.frame.setLayout(new GridLayout(BoardUtils.NUM_TILES, BoardUtils.NUM_TILES));
+        setSize(OUTER_FRAME_DIMENSION);
+        setLayout(new GridLayout(BoardUtils.NUM_TILES, BoardUtils.NUM_TILES));
 
         this.gameBoard = new Board();
+        initBoard();
         this.boardPanel = new BoardPanel();
 
-        this.frame.setVisible(true);
+        addKeyListener(this);
+        setVisible(true);
     }
 
     public static Table get() {
@@ -49,6 +50,59 @@ public class Table extends Observable {
 
     public void show() {
         Table.get().boardPanel.drawBoard(Table.get().gameBoard);
+    }
+
+    private void initBoard() {
+        for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
+            for (int j = 0; j < BoardUtils.NUM_TILES; j++) {
+                this.grid[i][j] = new JButton();
+                this.grid[i][j].setBackground(Color.LIGHT_GRAY);
+                this.grid[i][j].setFocusable(false);
+                this.grid[i][j].setOpaque(true);
+                this.grid[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                int finalI = i;
+                int finalJ = j;
+                this.grid[i][j].addActionListener(e -> selectVehicle(finalI, finalJ));
+            }
+        }
+    }
+
+    private void selectVehicle(int row, int col) {
+        for (Car car : cars) {
+            int carRow = car.getRow();
+            int carCol = car.getCol();
+            for (int i = 0; i < car.getLength(); i++) {
+                if (carRow == row && carCol == col) {
+                    this.movedCar = car;
+                    return;
+                }
+                if (car.isVertical()) {
+                    carRow++;
+                } else {
+                    carCol++;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
     }
 
     private class BoardPanel extends JPanel {
