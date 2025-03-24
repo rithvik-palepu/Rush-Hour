@@ -16,6 +16,14 @@ public class Car {
         this.color = color;
     }
 
+    public void move(int displacement) {
+        if (isVertical) {
+            row += displacement;
+        } else {
+            col += displacement;
+        }
+    }
+
     // getter methods
     public int getRow() {return this.row;}
     public int getCol() {return this.col;}

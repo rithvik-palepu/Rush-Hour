@@ -1,6 +1,5 @@
 import java.util.*;
 
-import com.google.common.collect.ImmutableList;
 // Board class, grid object of Tiles that contains all cars
 public class Board {
     private final Tile[][] gameBoard;
@@ -25,19 +24,7 @@ public class Board {
                 this.gameBoard[row][col] = new Tile.EmptyTile(row, col);
             }
         }
-        // add standard cars in standard positions
-        allCars.add(new Car
-                (2, 0, 2, false, 'R'));
-        allCars.add(new Car
-                (0, 3, 2, false, 'G'));
-        allCars.add(new Car
-                (3, 1, 3, true, 'Y'));
-        allCars.add(new Car
-                (5, 3, 3, false, 'B'));
-        allCars.add(new Car
-                (2, 4, 2, true, 'O'));
-        // place all cars just added onto the board
-        placeCars();
+
     }
 
     // essentially makes a new board when a car moves
