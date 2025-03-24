@@ -9,7 +9,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     private JButton[][] grid = new JButton[BoardUtils.NUM_TILES][BoardUtils.NUM_TILES];
     private List<Car> cars;
     // private final BoardPanel boardPanel;
-    private Board gameBoard;
+    private final Board gameBoard;
     private final Map<Character, Color> colorMap;
 
     private Tile sourceTile;
@@ -62,7 +62,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
                 this.grid[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 int finalI = i;
                 int finalJ = j;
-                this.grid[i][j].addActionListener(e -> selectVehicle(finalI, finalJ));
+                this.grid[i][j].addActionListener(e -> selectCar(finalI, finalJ));
                 this.add(grid[i][j]);
             }
         }
@@ -103,7 +103,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         }
     }
 
-    private void selectVehicle(int row, int col) {
+    private void selectCar(int row, int col) {
         for (Car car : cars) {
             int carRow = car.getRow();
             int carCol = car.getCol();
@@ -121,67 +121,45 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         }
     }
 
-    private void moveCar(int row, int col, int newRow, int newCol) {
-        this.movedCar = gameBoard.getTile(row, col).getCar();
-        this.targetTile = gameBoard.getTile(newRow, newCol);
-        if (movedCar != null) {
-            if (canMove(movedCar, targetTile, newRow, newCol)) {
+    private void moveCar(int rowDisplacement, int colDisplacement) {
+        if (this.movedCar == null) {
+            return;
+        }
 
-                row = (newRow > row) ? row + movedCar.getLength() : row;
-                col = (newCol > col) ? col + movedCar.getLength() : col;
-                int displacement = (movedCar.isVertical()) ? Math.abs(newRow - row)
-                        : Math.abs(newCol - col);
-                cars.remove(movedCar);
-                if (movedCar.isVertical()) {
-                    cars.add(new Car(row + displacement, col,
-                            movedCar.getLength(), true, movedCar.getColor()));
-                } else {
-                    cars.add(new Car(row, col + displacement,
-                            movedCar.getLength(), false, movedCar.getColor()));
-                }
-                transitionBoard();
-            }
+        if (canMove(rowDisplacement, colDisplacement)) {
+            rowDisplacement = (rowDisplacement > 0) ?
+                    rowDisplacement + movedCar.getLength() - 1 : rowDisplacement;
+            colDisplacement = (colDisplacement > 0) ?
+                    colDisplacement + movedCar.getLength() - 1 : colDisplacement;
+            cars.remove(this.movedCar);
+            cars.add(new Car(this.movedCar.getRow() + rowDisplacement,
+                    this.movedCar.getCol() + colDisplacement, this.movedCar.getLength(),
+                    this.movedCar.isVertical(), this.movedCar.getColor()));
+            this.movedCar = null;
+            transitionBoard();
         }
     }
 
-    private boolean canMovee(Car movedCar, int rowDisplacement,
+    // check if a designated car movement is legal
+    private boolean canMove(int rowDisplacement,
                              int colDisplacement) {
-        int newRow = movedCar.getRow() + rowDisplacement;
-        int newCol = movedCar.getCol() + colDisplacement;
+        // make sure that the car is being designated to move in the right direction
+        if ((this.movedCar.isVertical() && colDisplacement != 0) || (!this.movedCar.isVertical() && rowDisplacement != 0)) {
+            return false;
+        }
+        // save row and col indeces of where the car is designated to move
+        // if car is moving forward account for length of car, if moving backwards
+        // just add displacement
+        int newRow = (rowDisplacement > 0) ? this.movedCar.getRow() + this.movedCar.getLength()
+                + rowDisplacement - 1: this.movedCar.getRow() + rowDisplacement;
+        int newCol = (colDisplacement > 0) ? this.movedCar.getCol() + this.movedCar.getLength()
+                + colDisplacement - 1 : this.movedCar.getCol() + colDisplacement;
 
+        // ensure car is not being told to move out of bounds
         if (newRow < 0 || newRow >= BoardUtils.NUM_TILES
                 || newCol < 0 || newCol >= BoardUtils.NUM_TILES) {
             return false;
-        }
-
-        return true;
-    }
-
-    private boolean canMove(Car movedCar, Tile targetTile, int newRow, int newCol) {
-        int row = movedCar.getRow();
-        int col = movedCar.getCol();
-        int displacement = (movedCar.isVertical()) ? newRow - row : newCol - col;
-        this.sourceTile = gameBoard.getTile(row, col);
-        if (movedCar.isVertical()) {
-            row = (displacement > 0) ? movedCar.getLength()-1 : row;
-            // todo extract method
-            displacement = newRow - row;
-            for (int i = 0; i < Math.abs(displacement); i++) {
-                row = (displacement > 0) ? row + 1 : row - 1;
-                if (gameBoard.getTile(row, col).getCar() != null) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        displacement = newCol - col;
-        for (int i = 0; i < Math.abs(displacement); i++) {
-            col = (displacement > 0) ? col + 1 : col - 1;
-            if (gameBoard.getTile(row, col).getCar() != null) {
-                return false;
-            }
-        }
-        return true;
+        } else return gameBoard.getTile(newRow, newCol).getCar() == null;
     }
 
     @Override
@@ -191,7 +169,16 @@ public class Table extends JFrame implements KeyListener, ActionListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (this.movedCar == null) {
+            return;
+        }
 
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP -> moveCar(-1, 0);
+            case KeyEvent.VK_DOWN -> moveCar(1, 0);
+            case KeyEvent.VK_LEFT -> moveCar(0, -1);
+            case KeyEvent.VK_RIGHT -> moveCar(0, 1);
+        }
     }
 
     @Override
