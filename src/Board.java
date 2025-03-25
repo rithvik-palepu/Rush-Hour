@@ -3,7 +3,7 @@ import java.util.*;
 // Board class, grid object of Tiles that contains all cars
 public class Board {
     private final Tile[][] gameBoard;
-    private final Collection<Car> allCars;
+    private Collection<Car> allCars;
 
     // constructor, defines the state of a board object
     public Board() {
@@ -114,6 +114,11 @@ public class Board {
 
     public Tile getTile(int row, int col) {
         return gameBoard[row][col];
+    }
+
+    public void setCars(Collection<Car> cars) {
+        this.allCars = cars;
+        placeCars();
     }
 
     // loops through board and prints visual representation

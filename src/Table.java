@@ -41,16 +41,11 @@ public class Table extends JFrame implements KeyListener, ActionListener {
 
         this.gameBoard = new Board();
         initBoard();
-        // this.boardPanel = new BoardPanel();
 
         addKeyListener(this);
         setFocusable(true);
         setVisible(true);
     }
-
-    // public void show() {
-       // Table.get().boardPanel.drawBoard(Table.get().gameBoard);
-    // }
 
     private void initBoard() {
         for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
@@ -75,6 +70,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         cars.add(new Car(5, 3, 3, false, 'B'));
         cars.add(new Car(2, 4, 2, true, 'O'));
         // place all cars just added onto the board
+        gameBoard.setCars(this.cars);
         transitionBoard();
     }
 
@@ -127,17 +123,15 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         }
 
         if (canMove(rowDisplacement, colDisplacement)) {
-            rowDisplacement = (rowDisplacement > 0) ?
-                    rowDisplacement + movedCar.getLength() - 1 : rowDisplacement;
-            colDisplacement = (colDisplacement > 0) ?
-                    colDisplacement + movedCar.getLength() - 1 : colDisplacement;
             cars.remove(this.movedCar);
             cars.add(new Car(this.movedCar.getRow() + rowDisplacement,
                     this.movedCar.getCol() + colDisplacement, this.movedCar.getLength(),
                     this.movedCar.isVertical(), this.movedCar.getColor()));
-            this.movedCar = null;
+            // this.movedCar = null;
+            gameBoard.setCars(this.cars);
             transitionBoard();
         }
+        // gameBoard.setCars(this.cars);
     }
 
     // check if a designated car movement is legal
@@ -151,7 +145,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         // if car is moving forward account for length of car, if moving backwards
         // just add displacement
         int newRow = (rowDisplacement > 0) ? this.movedCar.getRow() + this.movedCar.getLength()
-                + rowDisplacement - 1: this.movedCar.getRow() + rowDisplacement;
+                + rowDisplacement - 1 : this.movedCar.getRow() + rowDisplacement;
         int newCol = (colDisplacement > 0) ? this.movedCar.getCol() + this.movedCar.getLength()
                 + colDisplacement - 1 : this.movedCar.getCol() + colDisplacement;
 
