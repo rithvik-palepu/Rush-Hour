@@ -6,32 +6,30 @@ import java.util.List;
 
 // Table class to visually represent the game board using Java swing
 public class Table extends JFrame implements KeyListener, ActionListener {
+    // grid of buttons for tiles so we can listen for clicks on
+    // tiles and convert that into a selected car
     private JButton[][] grid = new JButton[BoardUtils.NUM_TILES][BoardUtils.NUM_TILES];
     private List<Car> cars;
-    // private final BoardPanel boardPanel;
     private final Board gameBoard;
+    // map car symbols to actual java color objects
     private final Map<Character, Color> colorMap;
 
-    private Tile sourceTile;
-    private Tile targetTile;
     private Car movedCar;
 
     // dimensions for outer frame, gameBoard, and individual tiles
     private final static Dimension OUTER_FRAME_DIMENSION =
             new Dimension(600, 600);
-    private final static Dimension BOARD_PANEL_DIMENSION =
-            new Dimension(400, 350);
-    private final static Dimension TILE_PANEL_DIMENSION =
-            new Dimension(10, 10);
     //todo - make a defaultPieceImagesPath String
 
     // defines Table object, initializes gameBoard, frame, and dimensions
     public Table() {
         setTitle("Rush Hour");
-        //todo tableMenuBar
+        // todo - tableMenuBar
+        // initialize table size and layout
         setSize(OUTER_FRAME_DIMENSION);
         setLayout(new GridLayout(BoardUtils.NUM_TILES, BoardUtils.NUM_TILES));
 
+        // initialize car color to actual color map
         colorMap = new HashMap<>();
         colorMap.put('R', Color.RED);
         colorMap.put('G', Color.GREEN);
@@ -42,11 +40,14 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         this.gameBoard = new Board();
         initBoard();
 
+        // make the table visible and able to receive input
         addKeyListener(this);
         setFocusable(true);
         setVisible(true);
     }
 
+    // initialize board with JButton grids, standard color, load
+    // in basic position
     private void initBoard() {
         for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
             for (int j = 0; j < BoardUtils.NUM_TILES; j++) {
@@ -74,6 +75,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         transitionBoard();
     }
 
+    // clear board, loop through cars, place cars on board
     private void transitionBoard() {
         // clear board
         for (int r = 0; r < BoardUtils.NUM_TILES; r++) {
@@ -99,10 +101,12 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         }
     }
 
+    // given row and col coordinates select car on tile
     private void selectCar(int row, int col) {
         for (Car car : cars) {
             int carRow = car.getRow();
             int carCol = car.getCol();
+            // check all tiles that the car covers
             for (int i = 0; i < car.getLength(); i++) {
                 if (carRow == row && carCol == col) {
                     this.movedCar = car;
@@ -117,29 +121,34 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         }
     }
 
+    // move car in given direction
     private void moveCar(int rowDisplacement, int colDisplacement) {
         if (this.movedCar == null) {
             return;
         }
 
         if (canMove(rowDisplacement, colDisplacement)) {
+            // add car back to cars arraylist with updated coordinates
             cars.remove(this.movedCar);
             cars.add(new Car(this.movedCar.getRow() + rowDisplacement,
                     this.movedCar.getCol() + colDisplacement, this.movedCar.getLength(),
                     this.movedCar.isVertical(), this.movedCar.getColor()));
-            // this.movedCar = null;
+            // update board object to store car in new coordinate
             gameBoard.setCars(this.cars);
             transitionBoard();
+            // check if red car is on win tile
             if (checkWin(this.movedCar.getRow() + rowDisplacement,
                     this.movedCar.getCol() + colDisplacement)) {
-                // todo - end the game
+                // print win message and exit game
                 JOptionPane.showMessageDialog(null,
                         "You have won the game!",
                         "Win Message", JOptionPane.INFORMATION_MESSAGE);
                 System.exit(0);
             }
         }
-        // gameBoard.setCars(this.cars);
+        // default selected car to the car just moved
+        selectCar(this.movedCar.getRow() + rowDisplacement,
+                this.movedCar.getCol() + colDisplacement);
     }
 
     // check if a designated car movement is legal
@@ -164,6 +173,8 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         } else return gameBoard.getTile(newRow, newCol).getCar() == null;
     }
 
+    // check if the most recently moved car is red and
+    // is on the win square
     private boolean checkWin(int newRow, int newCol) {
         if (this.movedCar.getColor() != 'R') {
             return false;
@@ -181,6 +192,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
 
     }
 
+    // designate response for given key input
     @Override
     public void keyPressed(KeyEvent e) {
         if (this.movedCar == null) {
@@ -188,6 +200,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         }
 
         switch (e.getKeyCode()) {
+            // move car in designated direction based on arrow input
             case KeyEvent.VK_UP -> moveCar(-1, 0);
             case KeyEvent.VK_DOWN -> moveCar(1, 0);
             case KeyEvent.VK_LEFT -> moveCar(0, -1);
@@ -203,5 +216,20 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
+    }
+
+    public static class WelcomeScreen extends JFrame {
+        public WelcomeScreen() {
+            JFrame frame = new JFrame("Welcome Screen");
+            JLabel welcomeLabel = new JLabel("Welcome to Rush Hour!", JLabel.CENTER);
+            JButton welcomeButton = new JButton("Play");
+
+            welcomeButton.addActionListener(e -> new Table());
+
+            frame.setSize(300, 300);
+            frame.add(welcomeLabel);
+            frame.add(welcomeButton);
+            frame.setVisible(true);
+        }
     }
 }

@@ -116,6 +116,8 @@ public class Board {
         return gameBoard[row][col];
     }
 
+    // update board to include and place all cars
+    // after a car has been moved
     public void setCars(Collection<Car> cars) {
         this.allCars = cars;
         transitionBoard();
