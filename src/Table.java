@@ -130,6 +130,14 @@ public class Table extends JFrame implements KeyListener, ActionListener {
             // this.movedCar = null;
             gameBoard.setCars(this.cars);
             transitionBoard();
+            if (checkWin(this.movedCar.getRow() + rowDisplacement,
+                    this.movedCar.getCol() + colDisplacement)) {
+                // todo - end the game
+                JOptionPane.showMessageDialog(null,
+                        "You have won the game!",
+                        "Win Message", JOptionPane.INFORMATION_MESSAGE);
+                System.exit(0);
+            }
         }
         // gameBoard.setCars(this.cars);
     }
@@ -154,6 +162,18 @@ public class Table extends JFrame implements KeyListener, ActionListener {
                 || newCol < 0 || newCol >= BoardUtils.NUM_TILES) {
             return false;
         } else return gameBoard.getTile(newRow, newCol).getCar() == null;
+    }
+
+    private boolean checkWin(int newRow, int newCol) {
+        if (this.movedCar.getColor() != 'R') {
+            return false;
+        }
+
+        // victory tile coordinate
+        if (this.movedCar.getLength() == 3) {
+            return (newRow == 2) && (newCol == 3);
+        }
+        return (newRow == 2) && (newCol == 4);
     }
 
     @Override

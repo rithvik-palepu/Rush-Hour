@@ -118,7 +118,7 @@ public class Board {
 
     public void setCars(Collection<Car> cars) {
         this.allCars = cars;
-        placeCars();
+        transitionBoard();
     }
 
     // loops through board and prints visual representation
