@@ -155,7 +155,8 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     private boolean canMove(int rowDisplacement,
                              int colDisplacement) {
         // make sure that the car is being designated to move in the right direction
-        if ((this.movedCar.isVertical() && colDisplacement != 0) || (!this.movedCar.isVertical() && rowDisplacement != 0)) {
+        if ((this.movedCar.isVertical() && colDisplacement != 0) ||
+                (!this.movedCar.isVertical() && rowDisplacement != 0)) {
             return false;
         }
         // save row and col indeces of where the car is designated to move
@@ -218,12 +219,14 @@ public class Table extends JFrame implements KeyListener, ActionListener {
 
     }
 
+    // Create Welcome Screen with play button to start the game
     public static class WelcomeScreen extends JFrame {
         public WelcomeScreen() {
             JFrame frame = new JFrame("Welcome Screen");
             JLabel welcomeLabel = new JLabel("Welcome to Rush Hour!", JLabel.CENTER);
             JButton welcomeButton = new JButton("Play");
 
+            // on click, the welcome button starts the game
             welcomeButton.addActionListener(e -> new Table());
 
             frame.setSize(300, 300);

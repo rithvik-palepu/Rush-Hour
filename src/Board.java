@@ -45,7 +45,7 @@ public class Board {
             // makes sure cars are placed at each tile according to length
             for (int i = 0; i < car.getLength(); i++) {
                 gameBoard[row][col] = new Tile.OccupiedTile(row, col, car);
-                // acoount for car's direction
+                // account for car's direction
                 if (car.isVertical()) {
                     row++;
                 } else {
