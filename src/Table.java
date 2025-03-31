@@ -36,6 +36,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         colorMap.put('Y', Color.YELLOW);
         colorMap.put('B', Color.BLUE);
         colorMap.put('O', Color.ORANGE);
+        colorMap.put('M', Color.MAGENTA);
 
         this.gameBoard = new Board();
         initBoard();
@@ -64,12 +65,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         }
 
         // add standard cars in standard positions
-        cars = new ArrayList<>();
-        cars.add(new Car(2, 0, 2, false, 'R'));
-        cars.add(new Car(0, 3, 2, false, 'G'));
-        cars.add(new Car(3, 1, 3, true, 'Y'));
-        cars.add(new Car(5, 3, 3, false, 'B'));
-        cars.add(new Car(2, 4, 2, true, 'O'));
+        cars = Board.levelTwo();
         // place all cars just added onto the board
         gameBoard.setCars(this.cars);
         transitionBoard();

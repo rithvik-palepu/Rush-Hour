@@ -135,4 +135,40 @@ public class Board {
         }
         System.out.println();
     }
+
+    public static List<Car> levelOne() {
+        ArrayList<Car> cars = new ArrayList<>();
+        cars.add(new Car(2, 0, 2, false, 'R'));
+        cars.add(new Car(0, 2, 3, true, 'Y'));
+        cars.add(new Car(3, 5, 3, true, 'B'));
+        cars.add(new Car(3, 0, 3, false, 'M'));
+        cars.add(new Car(0, 4, 2, false, 'G'));
+        return cars;
+    }
+
+    public static List<Car> levelTwo() {
+        ArrayList<Car> cars = new ArrayList<>();
+        cars.add(new Car(2, 3, 2, false, 'R'));
+        cars.add(new Car(0, 2, 3, true, 'Y'));
+        cars.add(new Car(3, 0, 3, false, 'B'));
+        cars.add(new Car(1, 5, 3, true, 'M'));
+        cars.add(new Car(3, 3, 2, true, 'G'));
+        cars.add(new Car(4, 4, 2, false, 'O'));
+        return cars;
+    }
+
+    public static List<Car> levelThree() {
+        ArrayList<Car> cars = new ArrayList<>();
+        cars.add(new Car(2, 3, 2, false, 'R'));
+        cars.add(new Car(3, 0, 3, false, 'M'));
+        cars.add(new Car(3, 0, 3, false, 'M'));
+        cars.add(new Car(3, 0, 3, false, 'M'));
+        cars.add(new Car(3, 0, 3, false, 'M'));
+        cars.add(new Car(3, 0, 3, false, 'M'));
+        cars.add(new Car(3, 0, 3, false, 'M'));
+        cars.add(new Car(3, 0, 3, false, 'M'));
+        cars.add(new Car(3, 0, 3, false, 'M'));
+        cars.add(new Car(3, 0, 3, false, 'M'));
+        return cars;
+    }
 }
