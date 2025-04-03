@@ -136,7 +136,30 @@ public class Board {
         System.out.println();
     }
 
-    public static List<Car> levelOne() {
+    public static List<Car> chooseLevel(int level) {
+        List<Car> cars = new ArrayList<>();
+        switch(level) {
+            case 1:
+                cars = levelOne();
+                return cars;
+            case 2:
+                cars = levelTwo();
+                return cars;
+             case 3:
+                 cars = levelThree();
+                 return cars;
+             case 4:
+                 cars = levelFour();
+                 return cars;
+             case 5:
+                 cars = levelFive();
+                 return cars;
+            default:
+                throw new IllegalArgumentException("Sorry! That level isn't supported yet!");
+        }
+    }
+
+    private static List<Car> levelOne() {
         ArrayList<Car> cars = new ArrayList<>();
         cars.add(new Car(2, 0, 2, false, 'R'));
         cars.add(new Car(0, 2, 3, true, 'Y'));
@@ -146,7 +169,7 @@ public class Board {
         return cars;
     }
 
-    public static List<Car> levelTwo() {
+    private static List<Car> levelTwo() {
         ArrayList<Car> cars = new ArrayList<>();
         cars.add(new Car(2, 3, 2, false, 'R'));
         cars.add(new Car(0, 2, 3, true, 'Y'));
@@ -157,18 +180,48 @@ public class Board {
         return cars;
     }
 
-    public static List<Car> levelThree() {
+    private static List<Car> levelThree() {
         ArrayList<Car> cars = new ArrayList<>();
-        cars.add(new Car(2, 3, 2, false, 'R'));
+        cars.add(new Car(2, 0, 2, false, 'R'));
+        cars.add(new Car(0, 0, 2, true, 'L'));
+        cars.add(new Car(0, 1, 2, true, 'O'));
+        cars.add(new Car(0, 2, 2, false, 'B'));
+        cars.add(new Car(1, 2, 2, false, 'M'));
+        cars.add(new Car(0, 4, 2, true, 'P'));
+        cars.add(new Car(2, 2, 2, true, 'G'));
+        cars.add(new Car(4, 2, 2, true, 'T'));
+        cars.add(new Car(2, 3, 3, true, 'Y'));
+        cars.add(new Car(3, 4, 2, true, 'g'));
+        return cars;
+    }
+
+    private static List<Car> levelFour() {
+        ArrayList<Car> cars = new ArrayList<>();
+        cars.add(new Car(2, 0, 2, false, 'R'));
+        cars.add(new Car(1, 2, 2, true, 'L'));
         cars.add(new Car(3, 0, 3, false, 'M'));
-        cars.add(new Car(3, 0, 3, false, 'M'));
-        cars.add(new Car(3, 0, 3, false, 'M'));
-        cars.add(new Car(3, 0, 3, false, 'M'));
-        cars.add(new Car(3, 0, 3, false, 'M'));
-        cars.add(new Car(3, 0, 3, false, 'M'));
-        cars.add(new Car(3, 0, 3, false, 'M'));
-        cars.add(new Car(3, 0, 3, false, 'M'));
-        cars.add(new Car(3, 0, 3, false, 'M'));
+        cars.add(new Car(4, 0, 2, true, 'B'));
+        cars.add(new Car(4, 1, 2, true, 'P'));
+        cars.add(new Car(4, 2, 2, true, 'T'));
+        cars.add(new Car(1, 4, 3, true, 'Y'));
+        cars.add(new Car(2, 5, 2, true, 'O'));
+        cars.add(new Car(4, 4, 2, false, 'G'));
+        cars.add(new Car(5, 4, 2, false, 'g'));
+        return cars;
+    }
+
+    private static List<Car> levelFive() {
+        ArrayList<Car> cars = new ArrayList<>();
+        cars.add(new Car(2, 0, 2, false, 'R'));
+        cars.add(new Car(0, 2, 3, false, 'Y'));
+        cars.add(new Car(1, 0, 3, false, 'T'));
+        cars.add(new Car(3, 0, 3, false, 'C'));
+        cars.add(new Car(4, 0, 2, true, 'O'));
+        cars.add(new Car(4, 2, 2, true, 'g'));
+        cars.add(new Car(1, 4, 3, true, 'B'));
+        cars.add(new Car(2, 5, 2, true, 'G'));
+        cars.add(new Car(4, 4, 2, false, 'P'));
+        cars.add(new Car(5, 4, 2, false, 'M'));
         return cars;
     }
 }

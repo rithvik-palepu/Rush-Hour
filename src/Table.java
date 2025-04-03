@@ -1,3 +1,5 @@
+import org.w3c.dom.css.RGBColor;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -22,7 +24,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     //todo - make a defaultPieceImagesPath String
 
     // defines Table object, initializes gameBoard, frame, and dimensions
-    public Table() {
+    public Table(int level) {
         setTitle("Rush Hour");
         // todo - tableMenuBar
         // initialize table size and layout
@@ -37,9 +39,14 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         colorMap.put('B', Color.BLUE);
         colorMap.put('O', Color.ORANGE);
         colorMap.put('M', Color.MAGENTA);
+        colorMap.put('P', Color.PINK);
+        colorMap.put('g', Color.GRAY);
+        colorMap.put('C', Color.CYAN);
+        colorMap.put('L', Color.getHSBColor(117, 63, 100));
+        colorMap.put('T', Color.getHSBColor(47, 48, 98));
 
         this.gameBoard = new Board();
-        initBoard();
+        initBoard(level);
 
         // make the table visible and able to receive input
         addKeyListener(this);
@@ -49,7 +56,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
 
     // initialize board with JButton grids, standard color, load
     // in basic position
-    private void initBoard() {
+    private void initBoard(int level) {
         for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
             for (int j = 0; j < BoardUtils.NUM_TILES; j++) {
                 this.grid[i][j] = new JButton();
@@ -65,7 +72,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         }
 
         // add standard cars in standard positions
-        cars = Board.levelTwo();
+        this.cars = Board.chooseLevel(level);
         // place all cars just added onto the board
         gameBoard.setCars(this.cars);
         transitionBoard();
@@ -222,12 +229,33 @@ public class Table extends JFrame implements KeyListener, ActionListener {
             JLabel welcomeLabel = new JLabel("Welcome to Rush Hour!", JLabel.CENTER);
             JButton welcomeButton = new JButton("Play");
 
-            // on click, the welcome button starts the game
-            welcomeButton.addActionListener(e -> new Table());
+            // buttons for each level
+            JButton level1Button = new JButton("Level 1");
+            JButton level2Button = new JButton("Level 2");
+            JButton level3Button = new JButton("Level 3");
+            JButton level4Button = new JButton("Level 4");
+            JButton level5Button = new JButton("Level 5");
 
+            // on click, the welcome button starts the game
+            welcomeButton.addActionListener(e -> new Table(1));
+
+            // initialize board with given level
+            level1Button.addActionListener(e -> new Table(1));
+            level2Button.addActionListener(e -> new Table(2));
+            level3Button.addActionListener(e -> new Table(3));
+            level4Button.addActionListener(e -> new Table(4));
+            level5Button.addActionListener(e -> new Table(5));
+
+            // todo - add them in position so that they aren't on top of each other
             frame.setSize(300, 300);
             frame.add(welcomeLabel);
             frame.add(welcomeButton);
+            frame.add(level1Button);
+            frame.add(level2Button);
+            frame.add(level3Button);
+            frame.add(level4Button);
+            frame.add(level5Button);
+
             frame.setVisible(true);
         }
     }
