@@ -146,7 +146,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
                 JOptionPane.showMessageDialog(null,
                         "You have won the game!",
                         "Win Message", JOptionPane.INFORMATION_MESSAGE);
-                System.exit(0);
+                this.dispose();
             }
         }
         // default selected car to the car just moved
@@ -226,36 +226,30 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     public static class WelcomeScreen extends JFrame {
         public WelcomeScreen() {
             JFrame frame = new JFrame("Welcome Screen");
-            JLabel welcomeLabel = new JLabel("Welcome to Rush Hour!", JLabel.CENTER);
-            JButton welcomeButton = new JButton("Play");
+            // panel for buttons with ordered layout
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-            // buttons for each level
-            JButton level1Button = new JButton("Level 1");
-            JButton level2Button = new JButton("Level 2");
-            JButton level3Button = new JButton("Level 3");
-            JButton level4Button = new JButton("Level 4");
-            JButton level5Button = new JButton("Level 5");
+            // for loop to create 5 buttons
+            for (int i = 1; i <= 5; i++) {
+                JButton levelButton = new JButton("Level " + i);
+                int finalI = i;
+                // create game object with given level
+                levelButton.addActionListener(e -> new Table(finalI));
+                // set button size and alignment
+                levelButton.setMaximumSize(new Dimension(300, 50));
+                levelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+                panel.add(levelButton);
+            }
+            // quit button to close program
+            JButton quitButton = new JButton("Quit");
+            quitButton.addActionListener(e -> System.exit(0));
+            quitButton.setMaximumSize(new Dimension(300, 50));
+            quitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panel.add(quitButton);
 
-            // on click, the welcome button starts the game
-            welcomeButton.addActionListener(e -> new Table(1));
-
-            // initialize board with given level
-            level1Button.addActionListener(e -> new Table(1));
-            level2Button.addActionListener(e -> new Table(2));
-            level3Button.addActionListener(e -> new Table(3));
-            level4Button.addActionListener(e -> new Table(4));
-            level5Button.addActionListener(e -> new Table(5));
-
-            // todo - add them in position so that they aren't on top of each other
-            frame.setSize(300, 300);
-            frame.add(welcomeLabel);
-            frame.add(welcomeButton);
-            frame.add(level1Button);
-            frame.add(level2Button);
-            frame.add(level3Button);
-            frame.add(level4Button);
-            frame.add(level5Button);
-
+            frame.setSize(600, 600);
+            frame.add(panel);
             frame.setVisible(true);
         }
     }
