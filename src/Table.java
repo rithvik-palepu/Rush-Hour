@@ -1,8 +1,12 @@
 import org.w3c.dom.css.RGBColor;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -16,12 +20,13 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     // map car symbols to actual java color objects
     private final Map<Character, Color> colorMap;
 
+
     private Car movedCar;
 
     // dimensions for outer frame, gameBoard, and individual tiles
     private final static Dimension OUTER_FRAME_DIMENSION =
             new Dimension(600, 600);
-    //todo - make a defaultPieceImagesPath String
+    protected static final String pathToImagesURL = "Rush-Hour-Art/";
 
     // defines Table object, initializes gameBoard, frame, and dimensions
     public Table(int level) {
@@ -224,15 +229,26 @@ public class Table extends JFrame implements KeyListener, ActionListener {
 
     // Create Welcome Screen with play button to start the game
     public static class WelcomeScreen extends JFrame {
-        public WelcomeScreen() {
+        public WelcomeScreen() throws IOException {
             JFrame frame = new JFrame("Welcome Screen");
             // panel for buttons with ordered layout
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
+            BufferedImage logoImage = ImageIO.read(new File(
+                    Table.pathToImagesURL + "logo.png"
+            ));
+            JLabel logoLabel = new JLabel(new ImageIcon(logoImage));
+            logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panel.add(logoLabel);
+
             // for loop to create 5 buttons
             for (int i = 1; i <= 5; i++) {
-                JButton levelButton = new JButton("Level " + i);
+                ImageIcon levelImage = new ImageIcon(
+                        Table.pathToImagesURL +
+                                "level-" + i + ".png"
+                );
+                JButton levelButton = new JButton(levelImage);
                 int finalI = i;
                 // create game object with given level
                 levelButton.addActionListener(e -> new Table(finalI));
@@ -241,8 +257,11 @@ public class Table extends JFrame implements KeyListener, ActionListener {
                 levelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
                 panel.add(levelButton);
             }
+            ImageIcon quitImage = new ImageIcon(
+                    Table.pathToImagesURL + "quit.png"
+            );
             // quit button to close program
-            JButton quitButton = new JButton("Quit");
+            JButton quitButton = new JButton(quitImage);
             quitButton.addActionListener(e -> System.exit(0));
             quitButton.setMaximumSize(new Dimension(300, 50));
             quitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
