@@ -18,7 +18,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     private List<Car> cars;
     private final Board gameBoard;
     // map car symbols to actual java color objects
-    private final Map<Character, Color> colorMap;
+    private final Map<Character, ImageIcon> colorMap;
 
 
     private Car movedCar;
@@ -36,19 +36,19 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         setSize(OUTER_FRAME_DIMENSION);
         setLayout(new GridLayout(BoardUtils.NUM_TILES, BoardUtils.NUM_TILES));
 
-        // initialize car color to actual color map
+        // map to initialize car color to matching car png
         colorMap = new HashMap<>();
-        colorMap.put('R', Color.RED);
-        colorMap.put('G', Color.GREEN);
-        colorMap.put('Y', Color.YELLOW);
-        colorMap.put('B', Color.BLUE);
-        colorMap.put('O', Color.ORANGE);
-        colorMap.put('M', Color.MAGENTA);
-        colorMap.put('P', Color.PINK);
-        colorMap.put('g', Color.GRAY);
-        colorMap.put('C', Color.CYAN);
-        colorMap.put('L', Color.getHSBColor(117, 63, 100));
-        colorMap.put('T', Color.getHSBColor(47, 48, 98));
+        colorMap.put('R', new ImageIcon(pathToImagesURL + "red-car.png"));
+        colorMap.put('G', new ImageIcon(pathToImagesURL + "green-car.png"));
+        colorMap.put('Y', new ImageIcon(pathToImagesURL + "yellow-car.png"));
+        colorMap.put('B', new ImageIcon(pathToImagesURL + "blue-car.png"));
+        colorMap.put('O', new ImageIcon(pathToImagesURL + "mustard-car.png"));
+        colorMap.put('M', new ImageIcon(pathToImagesURL + "purple-car.png"));
+        // colorMap.put('P', Color.PINK);
+        colorMap.put('g', new ImageIcon(pathToImagesURL + "grey-car.png"));
+        colorMap.put('C', new ImageIcon(pathToImagesURL + "navy-car.png"));
+        colorMap.put('L', new ImageIcon(pathToImagesURL + "lime-car.png"));
+        // colorMap.put('T', Color.getHSBColor(47, 48, 98));
 
         this.gameBoard = new Board();
         initBoard(level);
@@ -89,17 +89,25 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         for (int r = 0; r < BoardUtils.NUM_TILES; r++) {
             for (int c = 0; c < BoardUtils.NUM_TILES; c++) {
                 grid[r][c].setText("");
+                grid[r][c].setIcon(null);
                 grid[r][c].setBackground(Color.LIGHT_GRAY);
             }
         }
 
+        // loop through cars and place on board
         for (Car car : cars) {
             int row = car.getRow();
             int col = car.getCol();
             for (int i = 0; i < car.getLength(); i++) {
-                grid[row][col].setText(car.getColor() + "");
-                grid[row][col].setBackground(
-                        colorMap.get(car.getColor()));
+                grid[row][col].setText("");
+                // only load in image if on the origin tile; this way we can stretch out
+                // the png to cover all two or three tiles instead of loading a png in for
+                // each tile
+                if (i == 0) {
+                    // todo - make this a scaled image
+                    grid[row][col].setIcon(
+                            colorMap.get(car.getColor()));
+                }
                 if (car.isVertical()) {
                     row++;
                 } else {
@@ -235,6 +243,8 @@ public class Table extends JFrame implements KeyListener, ActionListener {
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
+            // BufferedImage instead of ImageIcon so we can put tbe logo inside of a JLabel
+            // and center it
             BufferedImage logoImage = ImageIO.read(new File(
                     Table.pathToImagesURL + "logo.png"
             ));
