@@ -18,7 +18,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     private List<Car> cars;
     private final Board gameBoard;
     // map car symbols to actual java color objects
-    private final Map<Character, ImageIcon> colorMap;
+    private final Map<Character, String> colorMap;
 
 
     private Car movedCar;
@@ -38,7 +38,18 @@ public class Table extends JFrame implements KeyListener, ActionListener {
 
         // map to initialize car color to matching car png
         colorMap = new HashMap<>();
-        colorMap.put('R', new ImageIcon(pathToImagesURL + "red-car.png"));
+        colorMap.put('R', "red");
+        colorMap.put('G', "green");
+        colorMap.put('Y', "yellow");
+        colorMap.put('B', "blue");
+        colorMap.put('O', "mustard");
+        colorMap.put('M', "purple");
+        // colorMap.put('P', Color.PINK);
+        colorMap.put('g', "grey");
+        colorMap.put('C',"navy");
+        colorMap.put('L', "lime");
+
+        /* colorMap.put('R', new ImageIcon(pathToImagesURL + "red-car.png"));
         colorMap.put('G', new ImageIcon(pathToImagesURL + "green-car.png"));
         colorMap.put('Y', new ImageIcon(pathToImagesURL + "yellow-car.png"));
         colorMap.put('B', new ImageIcon(pathToImagesURL + "blue-car.png"));
@@ -47,7 +58,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         // colorMap.put('P', Color.PINK);
         colorMap.put('g', new ImageIcon(pathToImagesURL + "grey-car.png"));
         colorMap.put('C', new ImageIcon(pathToImagesURL + "navy-car.png"));
-        colorMap.put('L', new ImageIcon(pathToImagesURL + "lime-car.png"));
+        colorMap.put('L', new ImageIcon(pathToImagesURL + "lime-car.png")); */
         // colorMap.put('T', Color.getHSBColor(47, 48, 98));
 
         this.gameBoard = new Board();
@@ -89,8 +100,10 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         for (int r = 0; r < BoardUtils.NUM_TILES; r++) {
             for (int c = 0; c < BoardUtils.NUM_TILES; c++) {
                 grid[r][c].setText("");
-                grid[r][c].setIcon(null);
                 grid[r][c].setBackground(Color.LIGHT_GRAY);
+                grid[r][c].setIcon(null);
+                grid[r][c].setBorderPainted(true);
+                grid[r][c].setOpaque(true);
             }
         }
 
@@ -98,21 +111,39 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         for (Car car : cars) {
             int row = car.getRow();
             int col = car.getCol();
+
             for (int i = 0; i < car.getLength(); i++) {
-                grid[row][col].setText("");
-                // only load in image if on the origin tile; this way we can stretch out
-                // the png to cover all two or three tiles instead of loading a png in for
-                // each tile
-                if (i == 0) {
-                    // todo - make this a scaled image
-                    grid[row][col].setIcon(
-                            colorMap.get(car.getColor()));
-                }
+                int r = row + (car.isVertical() ? i : 0);
+                int c = col + (car.isVertical() ? 0 : i);
+
+                String imagePath = pathToImagesURL + colorMap.get(car.getColor()) + "-car-"
+                        + car.getLength();
+
                 if (car.isVertical()) {
-                    row++;
+                    /* if (i == 0) {
+                        imagePath += "-top";
+                    } else if (i == 1) {
+                        imagePath = (car.getLength() == 2) ? "-bottom" : "-mid";
+                    } else {
+                        imagePath += "-bottom";
+                    } */
                 } else {
-                    col++;
+                    if (i == 0) {
+                        imagePath += "-left";
+                    } else if (i == 1) {
+                        imagePath += (car.getLength() == 2) ? "-right" : "-middle";
+                    } else {
+                        imagePath += "-right";
+                    }
                 }
+                imagePath += ".png";
+
+                ImageIcon icon = new ImageIcon(imagePath);
+                Image image = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+
+                this.grid[r][c].setIcon(new ImageIcon(image));
+                this.grid[r][c].setBorderPainted(false);
+                this.grid[r][c].setOpaque(false);
             }
         }
     }
