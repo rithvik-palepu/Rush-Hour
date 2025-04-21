@@ -120,13 +120,13 @@ public class Table extends JFrame implements KeyListener, ActionListener {
                         + car.getLength();
 
                 if (car.isVertical()) {
-                    /* if (i == 0) {
+                    if (i == 0) {
                         imagePath += "-top";
                     } else if (i == 1) {
-                        imagePath = (car.getLength() == 2) ? "-bottom" : "-mid";
+                        imagePath += (car.getLength() == 2) ? "-bottom" : "-mid";
                     } else {
                         imagePath += "-bottom";
-                    } */
+                    }
                 } else {
                     if (i == 0) {
                         imagePath += "-left";
