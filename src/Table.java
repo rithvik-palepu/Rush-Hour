@@ -102,6 +102,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
                 grid[r][c].setText("");
                 grid[r][c].setBackground(Color.LIGHT_GRAY);
                 grid[r][c].setIcon(null);
+                grid[r][c].setContentAreaFilled(true);
                 grid[r][c].setBorderPainted(true);
                 grid[r][c].setOpaque(true);
             }
@@ -142,6 +143,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
                 Image image = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
 
                 this.grid[r][c].setIcon(new ImageIcon(image));
+                grid[r][c].setContentAreaFilled(false);
                 this.grid[r][c].setBorderPainted(false);
                 this.grid[r][c].setOpaque(false);
             }
