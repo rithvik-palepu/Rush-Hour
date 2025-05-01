@@ -26,7 +26,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     // dimensions for outer frame, gameBoard, and individual tiles
     private final static Dimension OUTER_FRAME_DIMENSION =
             new Dimension(600, 600);
-    protected static final String pathToImagesURL = "Rush-Hour-Art/";
+    protected static final String pathToImagesURL = "Rush-Hour/Rush-Hour-Art/";
 
     // defines Table object, initializes gameBoard, frame, and dimensions
     public Table(int level) {
@@ -76,7 +76,8 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
             for (int j = 0; j < BoardUtils.NUM_TILES; j++) {
                 this.grid[i][j] = new JButton();
-                this.grid[i][j].setBackground(Color.LIGHT_GRAY);
+                // this.grid[i][j].setBackground(Color.WHITE);
+                grid[i][j].setBackground(new Color(240,236,236));
                 this.grid[i][j].setFocusable(false);
                 this.grid[i][j].setOpaque(true);
                 this.grid[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -100,7 +101,8 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         for (int r = 0; r < BoardUtils.NUM_TILES; r++) {
             for (int c = 0; c < BoardUtils.NUM_TILES; c++) {
                 grid[r][c].setText("");
-                grid[r][c].setBackground(Color.LIGHT_GRAY);
+                // grid[r][c].setBackground(Color.WHITE);
+                grid[r][c].setBackground(new Color(240,236,236));
                 grid[r][c].setIcon(null);
                 grid[r][c].setContentAreaFilled(true);
                 grid[r][c].setBorderPainted(true);
