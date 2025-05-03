@@ -26,7 +26,11 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     // dimensions for outer frame, gameBoard, and individual tiles
     private final static Dimension OUTER_FRAME_DIMENSION =
             new Dimension(600, 600);
+<<<<<<< HEAD
     protected static final String pathToImagesURL = "Rush-Hour-Art/";
+=======
+    protected static final String pathToImagesURL = "Rush-Hour/Rush-Hour-Art/";
+>>>>>>> 0fb9d148d7ddaf558a720dfe7d80253a063b91d9
 
     // defines Table object, initializes gameBoard, frame, and dimensions
     public Table(int level) {
