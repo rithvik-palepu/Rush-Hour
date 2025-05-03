@@ -20,7 +20,6 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     // map car symbols to actual java color objects
     private final Map<Character, String> colorMap;
 
-
     private Car movedCar;
 
     // dimensions for outer frame, gameBoard, and individual tiles
@@ -29,8 +28,10 @@ public class Table extends JFrame implements KeyListener, ActionListener {
 
     protected static final String pathToImagesURL = "Rush-Hour-Art/";
 
+    protected static boolean isFirstRun;
+
     // defines Table object, initializes gameBoard, frame, and dimensions
-    public Table(int level) {
+    public Table(int level) throws IOException {
         setTitle("Rush Hour");
         // todo - tableMenuBar
         // initialize table size and layout
@@ -69,6 +70,11 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         addKeyListener(this);
         setFocusable(true);
         setVisible(true);
+
+        if (isFirstRun) {
+            new TutorialScreen();
+            isFirstRun = false;
+        }
     }
 
     // initialize board with JButton grids, standard color, load
@@ -274,7 +280,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     // Create Welcome Screen with play button to start the game
     public static class WelcomeScreen extends JFrame {
         public WelcomeScreen() throws IOException {
-            JFrame frame = new JFrame("Welcome Screen");
+            setTitle("Welcome Screen");
             // panel for buttons with ordered layout
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -288,6 +294,8 @@ public class Table extends JFrame implements KeyListener, ActionListener {
             logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             panel.add(logoLabel);
 
+            Table.isFirstRun = true;
+
             // for loop to create 5 buttons
             for (int i = 1; i <= 5; i++) {
                 ImageIcon levelImage = new ImageIcon(
@@ -297,7 +305,14 @@ public class Table extends JFrame implements KeyListener, ActionListener {
                 JButton levelButton = new JButton(levelImage);
                 int finalI = i;
                 // create game object with given level
-                levelButton.addActionListener(e -> new Table(finalI));
+                levelButton.addActionListener(e -> {
+                    try {
+                        new Table(finalI);
+                        Table.isFirstRun = false;
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
                 // set button size and alignment
                 levelButton.setMaximumSize(new Dimension(300, 50));
                 levelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -313,9 +328,51 @@ public class Table extends JFrame implements KeyListener, ActionListener {
             quitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
             panel.add(quitButton);
 
-            frame.setSize(600, 600);
-            frame.add(panel);
-            frame.setVisible(true);
+            setSize(600, 600);
+            add(panel);
+            setVisible(true);
+        }
+    }
+
+    public static class TutorialScreen extends JFrame {
+        public TutorialScreen() throws IOException {
+            setTitle("Tutorial");
+
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+            // BufferedImage instead of ImageIcon so we can put tbe tutorial image
+            // and tutorialText image inside a JLabel and center it
+            BufferedImage tutorialTextImage = ImageIO.read(new File(
+                    Table.pathToImagesURL + "tutorialText.png"
+            ));
+            BufferedImage tutorialImage = ImageIO.read(new File(
+                    Table.pathToImagesURL + "tutorial.png"
+            ));
+
+            // JLabels for tutorial text and tutorial image, centering, sizing
+            JLabel tutorialTextLabel = new JLabel(new ImageIcon(tutorialTextImage));
+            JLabel tutorialLabel = new JLabel(new ImageIcon(tutorialImage));
+            tutorialTextLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            tutorialLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            tutorialTextLabel.setMaximumSize(new Dimension(500, 50));
+            tutorialLabel.setMaximumSize(new Dimension(350, 150));
+            panel.add(tutorialTextLabel);
+            panel.add(tutorialLabel);
+
+            // okay button to dispose tutorial screen
+            ImageIcon okayImage = new ImageIcon(
+                    Table.pathToImagesURL + "okay.png"
+            );
+            JButton okayButton = new JButton(okayImage);
+            okayButton.addActionListener(e -> this.dispose());
+            okayButton.setMaximumSize(new Dimension(300, 50));
+            okayButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panel.add(okayButton);
+
+            setSize(600, 600);
+            add(panel);
+            setVisible(true);
         }
     }
 }
