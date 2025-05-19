@@ -50,6 +50,8 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         colorMap.put('g', "grey");
         colorMap.put('C',"navy");
         colorMap.put('L', "lime");
+        colorMap.put('P', "pink");
+        colorMap.put('T', "tan");
 
         /* colorMap.put('R', new ImageIcon(pathToImagesURL + "red-car.png"));
         colorMap.put('G', new ImageIcon(pathToImagesURL + "green-car.png"));
