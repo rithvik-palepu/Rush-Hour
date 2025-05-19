@@ -14,7 +14,7 @@ import java.util.List;
 public class Table extends JFrame implements KeyListener, ActionListener {
     // grid of buttons for tiles so we can listen for clicks on
     // tiles and convert that into a selected car
-    private JButton[][] grid = new JButton[BoardUtils.NUM_TILES][BoardUtils.NUM_TILES];
+    private JButton[][] grid = new JButton[BoardUtils.NUM_TILES][BoardUtils.NUM_TILES + 1];
     private List<Car> cars;
     private final Board gameBoard;
     // map car symbols to actual java color objects
@@ -24,7 +24,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
 
     // dimensions for outer frame, gameBoard, and individual tiles
     private final static Dimension OUTER_FRAME_DIMENSION =
-            new Dimension(600, 600);
+            new Dimension(700, 600);
 
     protected static final String pathToImagesURL = "Rush-Hour-Art/";
 
@@ -36,7 +36,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         // todo - tableMenuBar
         // initialize table size and layout
         setSize(OUTER_FRAME_DIMENSION);
-        setLayout(new GridLayout(BoardUtils.NUM_TILES, BoardUtils.NUM_TILES));
+        setLayout(new GridLayout(BoardUtils.NUM_TILES, BoardUtils.NUM_TILES + 1));
 
         // map to initialize car color to matching car png
         colorMap = new HashMap<>();
@@ -53,20 +53,11 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         colorMap.put('P', "pink");
         colorMap.put('T', "tan");
 
-        /* colorMap.put('R', new ImageIcon(pathToImagesURL + "red-car.png"));
-        colorMap.put('G', new ImageIcon(pathToImagesURL + "green-car.png"));
-        colorMap.put('Y', new ImageIcon(pathToImagesURL + "yellow-car.png"));
-        colorMap.put('B', new ImageIcon(pathToImagesURL + "blue-car.png"));
-        colorMap.put('O', new ImageIcon(pathToImagesURL + "mustard-car.png"));
-        colorMap.put('M', new ImageIcon(pathToImagesURL + "purple-car.png"));
-        // colorMap.put('P', Color.PINK);
-        colorMap.put('g', new ImageIcon(pathToImagesURL + "grey-car.png"));
-        colorMap.put('C', new ImageIcon(pathToImagesURL + "navy-car.png"));
-        colorMap.put('L', new ImageIcon(pathToImagesURL + "lime-car.png")); */
-        // colorMap.put('T', Color.getHSBColor(47, 48, 98));
-
         this.gameBoard = new Board();
         initBoard(level);
+
+        final JMenuBar tableMenuBar = createTableMenuBar();
+        this.setJMenuBar(tableMenuBar);
 
         // make the table visible and able to receive input
         addKeyListener(this);
@@ -79,14 +70,52 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         }
     }
 
+    private JMenuBar createTableMenuBar() {
+        // add file menu to JMenuBar
+        final JMenuBar tableMenuBar = new JMenuBar();
+        tableMenuBar.add(fileMenu());
+
+        return tableMenuBar;
+    }
+
+    // file option in JMenuBar, gives user option to view tutorial or quit level
+    private JMenu fileMenu() {
+        // File Menu that stores tutorial and exit items
+        final JMenu fileMenu = new JMenu("File");
+
+        final JMenuItem tutorialMenuItem = new JMenuItem("Tutorial");
+        // load tutorial screen
+        tutorialMenuItem.addActionListener(e -> {
+            try {
+                new TutorialScreen();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        final JMenuItem exitMenuItem = new JMenuItem("Exit");
+        // close level window, keep main menu up
+        exitMenuItem.addActionListener(e -> this.dispose());
+
+        fileMenu.add(tutorialMenuItem);
+        fileMenu.add(exitMenuItem);
+        return fileMenu;
+    }
+
     // initialize board with JButton grids, standard color, load
     // in basic position
     private void initBoard(int level) {
         for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
-            for (int j = 0; j < BoardUtils.NUM_TILES; j++) {
+            // account for extra row with arrow on it
+            for (int j = 0; j < BoardUtils.NUM_TILES + 1; j++) {
                 this.grid[i][j] = new JButton();
-                // this.grid[i][j].setBackground(Color.WHITE);
-                grid[i][j].setBackground(new Color(240,236,236));
+                // if on extra row, set background to dark gray so users know that it's
+                // off limits
+                if (j == BoardUtils.NUM_TILES) {
+                    this.grid[i][j].setBackground(Color.DARK_GRAY);
+                } else {
+                    this.grid[i][j].setBackground(new Color(240,236,236));
+                }
                 this.grid[i][j].setFocusable(false);
                 this.grid[i][j].setOpaque(true);
                 this.grid[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -96,6 +125,18 @@ public class Table extends JFrame implements KeyListener, ActionListener {
                 this.add(grid[i][j]);
             }
         }
+
+        // create scaled image of arrow
+        ImageIcon defaultArrowIcon = new ImageIcon(pathToImagesURL + "arrow.png");
+        Image defaultArrowImage = defaultArrowIcon.getImage().
+                getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        ImageIcon arrowIcon = new ImageIcon(defaultArrowImage);
+
+        // set tile adjacent to escape tile to have the arrow on it
+        this.grid[2][6].setIcon(arrowIcon);
+        this.grid[2][6].setOpaque(false);
+        this.grid[2][6].setContentAreaFilled(false);
+        this.grid[2][6].setBorderPainted(false);
 
         // add standard cars in standard positions
         this.cars = Board.chooseLevel(level);
@@ -372,7 +413,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
             okayButton.setAlignmentX(Component.CENTER_ALIGNMENT);
             panel.add(okayButton);
 
-            setSize(600, 600);
+            setSize(700, 600);
             add(panel);
             setVisible(true);
         }
