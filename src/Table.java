@@ -15,16 +15,18 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     // grid of buttons for tiles so we can listen for clicks on
     // tiles and convert that into a selected car
     private JButton[][] grid = new JButton[BoardUtils.NUM_TILES][BoardUtils.NUM_TILES + 1];
+    private JPanel gridPanel;
     private List<Car> cars;
     private final Board gameBoard;
     // map car symbols to actual java color objects
     private final Map<Character, String> colorMap;
 
     private Car movedCar;
+    private int numMoves;
 
     // dimensions for outer frame, gameBoard, and individual tiles
     private final static Dimension OUTER_FRAME_DIMENSION =
-            new Dimension(700, 600);
+            new Dimension(900, 600);
 
     protected static final String pathToImagesURL = "Rush-Hour-Art/";
 
@@ -36,7 +38,47 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         // todo - tableMenuBar
         // initialize table size and layout
         setSize(OUTER_FRAME_DIMENSION);
-        setLayout(new GridLayout(BoardUtils.NUM_TILES, BoardUtils.NUM_TILES + 1));
+        setLayout(new BorderLayout());
+        this.gridPanel = new JPanel(
+                new GridLayout(BoardUtils.NUM_TILES, BoardUtils.NUM_TILES + 1));
+        gridPanel.setPreferredSize(new Dimension(700, 600));
+        this.numMoves = 0;
+
+        // Side Panel to hold information including, level, total moves, time, etc.
+        JPanel sidePanel = new JPanel();
+        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
+        sidePanel.setPreferredSize(new Dimension(200, 600));
+        sidePanel.setBackground(new Color(220, 220, 220)); // optional
+
+        // Label to display current level
+        JLabel levelLabel = new JLabel("Level " + level);
+        levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        levelLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
+        sidePanel.add(levelLabel);
+
+        // Label to display current amount of moves
+        // TODO - make helper to re-display side panel after a transitionBoard event
+        // TODO - to ensure that Moves and Timer update
+        JLabel moveLabel = new JLabel("Moves: " + numMoves);
+        moveLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        sidePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        sidePanel.add(moveLabel);
+
+        // Label to display time elapsed to solve the level
+        JLabel timerLabel = new JLabel("Time: 00:00");
+        timerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        sidePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        sidePanel.add(timerLabel);
+
+        // Label to display controls
+        // TODO - Add graphics to show that the arrow keys control movement
+        JLabel controlLabel = new JLabel("Controls");
+        controlLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        sidePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        sidePanel.add(controlLabel);
+
+        this.add(sidePanel, BorderLayout.WEST);
+
 
         // map to initialize car color to matching car png
         colorMap = new HashMap<>();
@@ -122,7 +164,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
                 int finalI = i;
                 int finalJ = j;
                 this.grid[i][j].addActionListener(e -> selectCar(finalI, finalJ));
-                this.add(grid[i][j]);
+                this.gridPanel.add(grid[i][j]);
             }
         }
 
@@ -142,6 +184,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         this.cars = Board.chooseLevel(level);
         // place all cars just added onto the board
         gameBoard.setCars(this.cars);
+        this.add(gridPanel, BorderLayout.CENTER);
         transitionBoard();
     }
 
@@ -237,6 +280,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
             // update board object to store car in new coordinate
             gameBoard.setCars(this.cars);
             transitionBoard();
+            this.numMoves++;
             // check if red car is on win tile
             if (checkWin(this.movedCar.getRow() + rowDisplacement,
                     this.movedCar.getCol() + colDisplacement)) {
