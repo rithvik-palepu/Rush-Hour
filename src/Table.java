@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import javax.swing.Timer;
 
 // Table class to visually represent the game board using Java swing
 public class Table extends JFrame implements KeyListener, ActionListener {
@@ -20,6 +21,15 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     private final Board gameBoard;
     // map car symbols to actual java color objects
     private final Map<Character, String> colorMap;
+    private final int level;
+    private static int minutes;
+    private static int seconds;
+    private Timer timer;
+
+    private JLabel levelLabel;
+    private JLabel moveLabel;
+    private JLabel timerLabel;
+    private JLabel controlLabel;
 
     private Car movedCar;
     private int numMoves;
@@ -43,42 +53,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
                 new GridLayout(BoardUtils.NUM_TILES, BoardUtils.NUM_TILES + 1));
         gridPanel.setPreferredSize(new Dimension(700, 600));
         this.numMoves = 0;
-
-        // Side Panel to hold information including, level, total moves, time, etc.
-        JPanel sidePanel = new JPanel();
-        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
-        sidePanel.setPreferredSize(new Dimension(200, 600));
-        sidePanel.setBackground(new Color(220, 220, 220)); // optional
-
-        // Label to display current level
-        JLabel levelLabel = new JLabel("Level " + level);
-        levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        levelLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
-        sidePanel.add(levelLabel);
-
-        // Label to display current amount of moves
-        // TODO - make helper to re-display side panel after a transitionBoard event
-        // TODO - to ensure that Moves and Timer update
-        JLabel moveLabel = new JLabel("Moves: " + numMoves);
-        moveLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        sidePanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        sidePanel.add(moveLabel);
-
-        // Label to display time elapsed to solve the level
-        JLabel timerLabel = new JLabel("Time: 00:00");
-        timerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        sidePanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        sidePanel.add(timerLabel);
-
-        // Label to display controls
-        // TODO - Add graphics to show that the arrow keys control movement
-        JLabel controlLabel = new JLabel("Controls");
-        controlLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        sidePanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        sidePanel.add(controlLabel);
-
-        this.add(sidePanel, BorderLayout.WEST);
-
+        this.level = level;
 
         // map to initialize car color to matching car png
         colorMap = new HashMap<>();
@@ -115,15 +90,15 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     private JMenuBar createTableMenuBar() {
         // add file menu to JMenuBar
         final JMenuBar tableMenuBar = new JMenuBar();
-        tableMenuBar.add(fileMenu());
+        tableMenuBar.add(helpMenu());
 
         return tableMenuBar;
     }
 
     // file option in JMenuBar, gives user option to view tutorial or quit level
-    private JMenu fileMenu() {
+    private JMenu helpMenu() {
         // File Menu that stores tutorial and exit items
-        final JMenu fileMenu = new JMenu("File");
+        final JMenu fileMenu = new JMenu("Help");
 
         final JMenuItem tutorialMenuItem = new JMenuItem("Tutorial");
         // load tutorial screen
@@ -137,11 +112,53 @@ public class Table extends JFrame implements KeyListener, ActionListener {
 
         final JMenuItem exitMenuItem = new JMenuItem("Exit");
         // close level window, keep main menu up
-        exitMenuItem.addActionListener(e -> this.dispose());
+        exitMenuItem.addActionListener(e -> {
+             seconds = 0;
+             minutes = 0;
+             timer.stop();
+             this.dispose();
+        });
 
         fileMenu.add(tutorialMenuItem);
         fileMenu.add(exitMenuItem);
         return fileMenu;
+    }
+
+    private void addSidePanel() {
+        // Side Panel to hold information including, level, total moves, time, etc.
+        JPanel sidePanel = new JPanel();
+        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
+        sidePanel.setPreferredSize(new Dimension(200, 600));
+        sidePanel.setBackground(new Color(220, 220, 220)); // optional
+
+        // Label to display current level
+        levelLabel = new JLabel("Level " + this.level);
+        levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        levelLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
+        sidePanel.add(levelLabel);
+
+        // Label to display current amount of moves
+        // TODO - make helper to re-display side panel after a transitionBoard event
+        // TODO - to ensure that Moves and Timer update
+        moveLabel = new JLabel("Moves: " + numMoves);
+        moveLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        sidePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        sidePanel.add(moveLabel);
+
+        // Label to display time elapsed to solve the level
+        timerLabel = new JLabel("Time: 00:00");
+        timerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        sidePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        sidePanel.add(timerLabel);
+
+        // Label to display controls
+        // TODO - Add graphics to show that the arrow keys control movement
+        controlLabel = new JLabel("Controls");
+        controlLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        sidePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        sidePanel.add(controlLabel);
+
+        this.add(sidePanel, BorderLayout.WEST);
     }
 
     // initialize board with JButton grids, standard color, load
@@ -185,6 +202,10 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         // place all cars just added onto the board
         gameBoard.setCars(this.cars);
         this.add(gridPanel, BorderLayout.CENTER);
+        addSidePanel();
+        // initialize timer after initializing board
+        timer = new Timer(1000, e -> updateTimer());
+        timer.start();
         transitionBoard();
     }
 
@@ -279,8 +300,9 @@ public class Table extends JFrame implements KeyListener, ActionListener {
                     this.movedCar.isVertical(), this.movedCar.getColor()));
             // update board object to store car in new coordinate
             gameBoard.setCars(this.cars);
-            transitionBoard();
             this.numMoves++;
+            moveLabel.setText("Moves: " + this.numMoves);
+            transitionBoard();
             // check if red car is on win tile
             if (checkWin(this.movedCar.getRow() + rowDisplacement,
                     this.movedCar.getCol() + colDisplacement)) {
@@ -319,6 +341,17 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         } else return gameBoard.getTile(newRow, newCol).getCar() == null;
     }
 
+    private void updateTimer() {
+        seconds++;
+        if (seconds >= 60) {
+            seconds = 0;
+            minutes += 1;
+        }
+        String secondString = (seconds < 10 ? "0" : "") + seconds;
+        String minuteString = (minutes < 10 ? "0" : "") + minutes;
+        timerLabel.setText("Time: " + minuteString + ":" + secondString);
+    }
+
     // check if the most recently moved car is red and
     // is on the win square
     private boolean checkWin(int newRow, int newCol) {
@@ -327,10 +360,13 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         }
 
         // victory tile coordinate
-        if (this.movedCar.getLength() == 3) {
-            return (newRow == 2) && (newCol == 3);
+        if ((newRow == 2) && (newCol == 4)) {
+            seconds = 0;
+            minutes = 0;
+            timer.stop();
+            return true;
         }
-        return (newRow == 2) && (newCol == 4);
+        return false;
     }
 
     @Override
@@ -457,7 +493,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
             okayButton.setAlignmentX(Component.CENTER_ALIGNMENT);
             panel.add(okayButton);
 
-            setSize(700, 600);
+            setSize(900, 600);
             add(panel);
             setVisible(true);
         }
