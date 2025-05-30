@@ -124,7 +124,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         return fileMenu;
     }
 
-    private void addSidePanel() {
+    private void addSidePanel() throws IOException {
         // Side Panel to hold information including, level, total moves, time, etc.
         JPanel sidePanel = new JPanel();
         sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
@@ -132,14 +132,14 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         sidePanel.setBackground(new Color(220, 220, 220)); // optional
 
         // Label to display current level
-        levelLabel = new JLabel("Level " + this.level);
+        BufferedImage levelImage = ImageIO.read(new File(
+                Table.pathToImagesURL + "level-" + this.level + ".png"
+        ));
+        levelLabel = new JLabel(new ImageIcon(levelImage));
         levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        levelLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
         sidePanel.add(levelLabel);
 
         // Label to display current amount of moves
-        // TODO - make helper to re-display side panel after a transitionBoard event
-        // TODO - to ensure that Moves and Timer update
         moveLabel = new JLabel("Moves: " + numMoves);
         moveLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         sidePanel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -153,17 +153,27 @@ public class Table extends JFrame implements KeyListener, ActionListener {
 
         // Label to display controls
         // TODO - Add graphics to show that the arrow keys control movement
-        controlLabel = new JLabel("Controls");
+        BufferedImage controlImage = ImageIO.read(new File(
+                Table.pathToImagesURL + "arrowKeys.png"
+        ));
+        controlLabel = new JLabel(new ImageIcon(controlImage.getScaledInstance
+                (200, 100, Image.SCALE_SMOOTH)));
         controlLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // TODO- Scale text to span 2 lines
+        JLabel controlText = new JLabel("USE ARROW KEYS TO CONTROL MOVEMENT");
+        controlText.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         sidePanel.add(Box.createRigidArea(new Dimension(0, 10)));
         sidePanel.add(controlLabel);
+        sidePanel.add(controlText);
 
         this.add(sidePanel, BorderLayout.WEST);
     }
 
     // initialize board with JButton grids, standard color, load
     // in basic position
-    private void initBoard(int level) {
+    private void initBoard(int level) throws IOException {
         for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
             // account for extra row with arrow on it
             for (int j = 0; j < BoardUtils.NUM_TILES + 1; j++) {
