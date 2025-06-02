@@ -142,7 +142,9 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         // Label to display current amount of moves
         moveLabel = new JLabel("Moves: " + numMoves);
         moveLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // spacing
         sidePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
         sidePanel.add(moveLabel);
 
         // Label to display time elapsed to solve the level
@@ -152,7 +154,6 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         sidePanel.add(timerLabel);
 
         // Label to display controls
-        // TODO - Add graphics to show that the arrow keys control movement
         BufferedImage controlImage = ImageIO.read(new File(
                 Table.pathToImagesURL + "arrowKeys.png"
         ));
@@ -160,13 +161,25 @@ public class Table extends JFrame implements KeyListener, ActionListener {
                 (200, 100, Image.SCALE_SMOOTH)));
         controlLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // TODO- Scale text to span 2 lines
-        JLabel controlText = new JLabel("USE ARROW KEYS TO CONTROL MOVEMENT");
+        // Text under controlLabel
+        JLabel controlText = new JLabel("USE ARROW KEYS TO");
         controlText.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Second label to ensure no words get cut off
+        JLabel controlText2 = new JLabel("CONTROL MOVEMENT");
+        controlText2.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Third Label to ensure no words get cut off
+        JLabel controlText3 = new JLabel("RED CAR NEEDS TO ESCAPE");
+        controlText3.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // spacing
         sidePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
         sidePanel.add(controlLabel);
         sidePanel.add(controlText);
+        sidePanel.add(controlText2);
+        sidePanel.add(controlText3);
 
         this.add(sidePanel, BorderLayout.WEST);
     }
@@ -485,11 +498,12 @@ public class Table extends JFrame implements KeyListener, ActionListener {
 
             // JLabels for tutorial text and tutorial image, centering, sizing
             JLabel tutorialTextLabel = new JLabel(new ImageIcon(tutorialTextImage));
-            JLabel tutorialLabel = new JLabel(new ImageIcon(tutorialImage));
+            JLabel tutorialLabel = new JLabel(new ImageIcon(
+                    tutorialImage.getScaledInstance(500, 300, Image.SCALE_SMOOTH)));
             tutorialTextLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             tutorialLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             tutorialTextLabel.setMaximumSize(new Dimension(500, 50));
-            tutorialLabel.setMaximumSize(new Dimension(350, 150));
+            tutorialLabel.setMaximumSize(new Dimension(500, 300));
             panel.add(tutorialTextLabel);
             panel.add(tutorialLabel);
 
