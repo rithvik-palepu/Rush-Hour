@@ -1,5 +1,3 @@
-import org.w3c.dom.css.RGBColor;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -15,8 +13,8 @@ import javax.swing.Timer;
 public class Table extends JFrame implements KeyListener, ActionListener {
     // grid of buttons for tiles so we can listen for clicks on
     // tiles and convert that into a selected car
-    private JButton[][] grid = new JButton[BoardUtils.NUM_TILES][BoardUtils.NUM_TILES + 1];
-    private JPanel gridPanel;
+    private final JButton[][] grid = new JButton[BoardUtils.NUM_TILES][BoardUtils.NUM_TILES + 1];
+    private final JPanel gridPanel;
     private List<Car> cars;
     private final Board gameBoard;
     // map car symbols to actual java color objects
@@ -26,10 +24,8 @@ public class Table extends JFrame implements KeyListener, ActionListener {
     private static int seconds;
     private Timer timer;
 
-    private JLabel levelLabel;
     private JLabel moveLabel;
     private JLabel timerLabel;
-    private JLabel controlLabel;
 
     private Car movedCar;
     private int numMoves;
@@ -113,6 +109,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         final JMenuItem exitMenuItem = new JMenuItem("Exit");
         // close level window, keep main menu up
         exitMenuItem.addActionListener(e -> {
+            // reset timer
              seconds = 0;
              minutes = 0;
              timer.stop();
@@ -132,10 +129,12 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         sidePanel.setBackground(new Color(220, 220, 220)); // optional
 
         // Label to display current level
+        // ImageIcon loaded from art file matching to corresponding level
         BufferedImage levelImage = ImageIO.read(new File(
                 Table.pathToImagesURL + "level-" + this.level + ".png"
         ));
-        levelLabel = new JLabel(new ImageIcon(levelImage));
+        // label fields to control label state and conveniently manually update when needed
+        JLabel levelLabel = new JLabel(new ImageIcon(levelImage));
         levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         sidePanel.add(levelLabel);
 
@@ -157,7 +156,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         BufferedImage controlImage = ImageIO.read(new File(
                 Table.pathToImagesURL + "arrowKeys.png"
         ));
-        controlLabel = new JLabel(new ImageIcon(controlImage.getScaledInstance
+        JLabel controlLabel = new JLabel(new ImageIcon(controlImage.getScaledInstance
                 (200, 100, Image.SCALE_SMOOTH)));
         controlLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -364,6 +363,7 @@ public class Table extends JFrame implements KeyListener, ActionListener {
         } else return gameBoard.getTile(newRow, newCol).getCar() == null;
     }
 
+    // helper method to update timer
     private void updateTimer() {
         seconds++;
         if (seconds >= 60) {
